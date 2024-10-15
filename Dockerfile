@@ -5,10 +5,14 @@ FROM selenium/standalone-chrome
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Install necessary packages including jq
+# Switch to root user to install pip and other packages
 USER root
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3 get-pip.py
+
+# Install necessary packages including pip
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    && apt-get clean
 
 
 # Set the working directory
