@@ -18,6 +18,8 @@ jobs:
           - 5900:5900
         env:
           - HUB_HOST=selenium-hub
+        depends_on:
+          - selenium-hub
     
     steps:
       - name: Checkout code
@@ -34,4 +36,4 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m pytest -n auto
+          pytest -n auto
