@@ -20,7 +20,7 @@ WORKDIR /app
 
 # Copy requirements file and install them
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt --break-system-packages
 
 # Copy the rest of your application code
 COPY . .
