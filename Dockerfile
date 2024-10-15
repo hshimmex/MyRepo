@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     gnupg \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,12 +22,17 @@ RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver
-RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') && \
-    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") && \
-    wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
-    unzip chromedriver_linux64.zip -d /usr/local/bin/ && \
-    rm chromedriver_linux64.zip
+# Fetch compatible ChromeDriver version based on installed Chrome
+RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1-3) && \
+    CHROME_VERSIONS_DATA=$(curl -s https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json) && \
+    CHROME_VERSIONS_LIST=$(echo $CHROME_VERSIONS_DATA | jq -r '.versions | reverse | .[] | select(.version | startswith("'"$CHROME_VERSION"'"))') && \
+    echo "$CHROME_VERSIONS_LIST" | while read -r version; do \
+        HOSTS_DATA=$(echo "$version" | jq -r '.downloads.chromedriver[] | select(.platform=="linux64") | .url'); \
+        wget -q "$HOSTS_DATA" -O chromedriver.zip && \
+        unzip chromedriver.zip -d /usr/local/bin/ && \
+        rm chromedriver.zip; \
+        break; \
+    done
 
 # Set the working directory
 WORKDIR /app
