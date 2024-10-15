@@ -1,0 +1,15 @@
+version: '3'
+services:
+  hub:
+    image: selenium/hub
+    ports:
+      - "4444:4444"
+
+  chrome:
+    build:
+      context: .
+      dockerfile: Dockerfile  # The one for your Selenium Node
+    depends_on:
+      - hub
+    environment:
+      - HUB_HOST=hub
