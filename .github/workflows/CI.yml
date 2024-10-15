@@ -1,18 +1,39 @@
-# .github/workflows/test.yml
-name: CI
+name: Selenium Tests
 
-on: [push, pull_request, workflow_dispatch]
+on: [push]
 
 jobs:
-  test:
+  selenium:
     runs-on: ubuntu-latest
+    
+    services:
+      selenium-hub:
+        image: selenium/hub
+        ports:
+          - 4444:4444
 
+      chrome:
+        image: selenium/node-chrome
+        ports:
+          - 5900:5900
+        env:
+          - HUB_HOST=selenium-hub
+        depends_on:
+          - selenium-hub
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build Docker image
-        run: docker build . -t todo-test
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
 
-      - name: Run tests in Docker
-        run: docker run --rm todo-test
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest -n auto
