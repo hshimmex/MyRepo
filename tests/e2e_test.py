@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from objects.todo import TODOList, TaskStatus
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope='function' )
 def todo_object():
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Run in headless mode
