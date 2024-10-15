@@ -30,4 +30,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Command to run the tests
-CMD ["pytest", "-n", "auto"]
+CMD ["python", "-m", "pytest", "-n", "auto"]
