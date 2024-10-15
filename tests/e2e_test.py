@@ -13,6 +13,7 @@ def todo_object():
     chrome_options.add_argument("--no-sandbox")  # Overcome limited resource problems
     chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
     service = Service(executable_path='/usr/local/bin/chromedriver')
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.get("https://todomvc.com/examples/vue/dist/#/")
     todo_object = TODOList(driver)
     yield todo_object
