@@ -9,18 +9,24 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y \
     wget \
     unzip \
-    chromium \
+    gnupg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver
-RUN CHROMEDRIVER_VERSION=$(wget -qO - https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+# Install Google Chrome
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Get the version of the installed Chrome and download match chrome driver
+RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+') && \
+    CHROMEDRIVER_VERSION=$(wget -qO - "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") && \
     wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
     unzip chromedriver_linux64.zip -d /usr/local/bin/ && \
     rm chromedriver_linux64.zip
-    
-# Remove existing ChromeDriver if it exists
-RUN rm -f /usr/local/bin/chromedriver || true
 
 # Set the working directory
 WORKDIR /app
