@@ -18,6 +18,9 @@ RUN CHROMEDRIVER_VERSION=$(wget -qO - https://chromedriver.storage.googleapis.co
     wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
     unzip chromedriver_linux64.zip -d /usr/local/bin/ && \
     rm chromedriver_linux64.zip
+    
+# Remove existing ChromeDriver if it exists
+RUN rm -f /usr/local/bin/chromedriver || true
 
 # Set the working directory
 WORKDIR /app
