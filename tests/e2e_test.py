@@ -1,12 +1,18 @@
 import pytest
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 from objects.todo import TODOList, TaskStatus
 
 
 @pytest.fixture(autouse=True)
 def todo_object():
-    driver = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Overcome limited resource problems
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+    service = Service(executable_path='/usr/local/bin/chromedriver')
     driver.get("https://todomvc.com/examples/vue/dist/#/")
     todo_object = TODOList(driver)
     yield todo_object
