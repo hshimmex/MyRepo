@@ -12,10 +12,7 @@ def todo_object():
     chrome_options.add_argument("--headless")  # Run in headless mode
     chrome_options.add_argument("--no-sandbox")  # Overcome limited resource problems
     chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
-     driver = webdriver.Remote(
-        command_executor='http://hub:4444/wd/hub',
-        options=webdriver.ChromeOptions()  # You can still add options here
-    )
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get("https://todomvc.com/examples/vue/dist/#/")
     todo_object = TODOList(driver)
     yield todo_object
